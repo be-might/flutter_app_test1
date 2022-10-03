@@ -12,34 +12,78 @@ class MyFirstApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'IndieFlower'),
+      theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            color: Colors.indigo,
+          ),
+          scaffoldBackgroundColor: Color.fromARGB(255, 113, 124, 187)),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Adding Assets'),
+          title: Text('Counter'),
           centerTitle: true,
         ),
         body: Center(
-          child: Stack(
-            fit: StackFit.expand,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image(image: AssetImage('assets/images/bg.jpg')),
-              Image(image: AssetImage('assets/icons/icon.png')),
-              Positioned(
-                top: 16,
-                left: 115,
-                child: Text(
-                  'My custom font',
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Colors.white,
-                    // fontFamily: 'IndieFlower',
-                  ),
-                ),
+              Text(
+                'Tap "-" to decrement',
+                style: TextStyle(color: Colors.white),
+              ),
+              CounterWidget(),
+              Text(
+                'Tap "+" to increment',
+                style: TextStyle(color: Colors.white),
               )
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class CounterWidget extends StatefulWidget {
+  const CounterWidget({super.key});
+
+  @override
+  State<CounterWidget> createState() => _CounterWidgetState();
+}
+
+class _CounterWidgetState extends State<CounterWidget> {
+  int _initialValue = 50;
+
+  void increment() {
+    setState(() {
+      _initialValue += 1;
+    });
+  }
+  
+  void decrement() {
+    setState(() {
+      _initialValue -= 1;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.all(6),
+        height: 50,
+        width: 125,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 185, 192, 230)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(onPressed: decrement, icon: Icon(Icons.exposure_minus_1)),
+            Text(
+              '$_initialValue',
+              style: TextStyle(fontSize: 19),
+            ),
+            IconButton(onPressed: increment, icon: Icon(Icons.exposure_plus_1))
+          ],
+        ));
   }
 }
