@@ -6,83 +6,84 @@ void main() {
   runApp(MyFirstApp());
 }
 
-class MyFirstApp extends StatefulWidget {
-  @override
-  State<MyFirstApp> createState() => _MyFirstAppState();
-}
-
-class _MyFirstAppState extends State<MyFirstApp> {
-  bool _loading = false;
-  double _prgressValue = 0;
-
-  @override
-  void initState() {
-    _loading = false;
-    _prgressValue = 0;
-    super.initState();
-  }
+class MyFirstApp extends StatelessWidget {
+  const MyFirstApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            color: Colors.indigo,
+          ),
+          scaffoldBackgroundColor: Color.fromARGB(255, 113, 124, 187)),
       home: Scaffold(
-        backgroundColor: Colors.indigo,
         appBar: AppBar(
-          title: const Text('My First app'),
+          title: Text('Counter'),
           centerTitle: true,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _loading = !_loading;
-              _updateProgress();
-            });
-          },
-          child: const Icon(Icons.cloud_download),
-        ),
         body: Center(
-          child: Container(
-              padding: const EdgeInsets.all(16),
-              child: _loading
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        LinearProgressIndicator(
-                          value: _prgressValue,
-                        ),
-                        Text(
-                          '${(_prgressValue * 100).round()}%',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    )
-                  : const Text(
-                      'Press button to download',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Tap "-" to decrement',
+                style: TextStyle(color: Colors.white),
+              ),
+              CounterWidget(),
+              Text(
+                'Tap "+" to increment',
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  void _updateProgress() {
-    const oneSec = Duration(seconds: 1);
-    Timer.periodic(oneSec, (timer) {
-      setState(() {
-        _prgressValue += 0.2;
-        if (_prgressValue.toStringAsFixed(1) == '1.0') {
-          _loading = false;
-          timer.cancel();
-          _prgressValue = 0.0;
-          return;
-        }
-      });
+class CounterWidget extends StatefulWidget {
+  const CounterWidget({super.key});
+
+  @override
+  State<CounterWidget> createState() => _CounterWidgetState();
+}
+
+class _CounterWidgetState extends State<CounterWidget> {
+  int _initialValue = 50;
+
+  void increment() {
+    setState(() {
+      _initialValue += 1;
     });
+  }
+  
+  void decrement() {
+    setState(() {
+      _initialValue -= 1;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.all(6),
+        height: 50,
+        width: 125,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromARGB(255, 185, 192, 230)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(onPressed: decrement, icon: Icon(Icons.exposure_minus_1)),
+            Text(
+              '$_initialValue',
+              style: TextStyle(fontSize: 19),
+            ),
+            IconButton(onPressed: increment, icon: Icon(Icons.exposure_plus_1))
+          ],
+        ));
   }
 }
