@@ -2,6 +2,9 @@
 
 This is a training app and it's a part of a 'learn flutter' course on udemy
 
+lesson 29 homework
+Screenshot 2022-10-08 012455.png
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
