@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyFirstApp());
@@ -12,78 +13,170 @@ class MyFirstApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            color: Colors.indigo,
-          ),
-          scaffoldBackgroundColor: Color.fromARGB(255, 113, 124, 187)),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Counter'),
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Tap "-" to decrement',
-                style: TextStyle(color: Colors.white),
-              ),
-              CounterWidget(),
-              Text(
-                'Tap "+" to increment',
-                style: TextStyle(color: Colors.white),
-              )
-            ],
+          title: const Text(
+            'Weather',
+            style: TextStyle(color: Colors.black87),
           ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+          iconTheme: IconThemeData(color: Colors.black54),
+          systemOverlayStyle:
+              SystemUiOverlayStyle(statusBarBrightness: Brightness.light),
+          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
         ),
+        body: _BodyWidget(),
       ),
     );
   }
 }
 
-class CounterWidget extends StatefulWidget {
-  const CounterWidget({super.key});
-
-  @override
-  State<CounterWidget> createState() => _CounterWidgetState();
-}
-
-class _CounterWidgetState extends State<CounterWidget> {
-  int _initialValue = 50;
-
-  void increment() {
-    setState(() {
-      _initialValue += 1;
-    });
-  }
-  
-  void decrement() {
-    setState(() {
-      _initialValue -= 1;
-    });
-  }
+class _BodyWidget extends StatelessWidget {
+  const _BodyWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.all(6),
-        height: 50,
-        width: 125,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Color.fromARGB(255, 185, 192, 230)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(onPressed: decrement, icon: Icon(Icons.exposure_minus_1)),
-            Text(
-              '$_initialValue',
-              style: TextStyle(fontSize: 19),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _HeaderImageWidget(),
+          SafeArea(
+              child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _weatherDescription(),
+                Divider(),
+                _temperature(),
+                Divider(),
+                _temperatureForecast(),
+                Divider(),
+                _footerRatings()
+              ],
             ),
-            IconButton(onPressed: increment, icon: Icon(Icons.exposure_plus_1))
-          ],
-        ));
+          )),
+        ],
+      ),
+    );
   }
+}
+
+class _HeaderImageWidget extends StatelessWidget {
+  const _HeaderImageWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image(
+        fit: BoxFit.cover,
+        image: NetworkImage(
+            'https://img4.goodfon.ru/original/800x480/e/c5/priroda-oblaka-solnyshko-iasnaia-pogoda.jpg'));
+  }
+}
+
+Column _weatherDescription() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text(
+        'Thuesday - May 22',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
+      ),
+      Divider(),
+      Text(
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque odio ligula, sagittis ut mi vel, tincidunt porttitor urna. Proin eu pretium diam. Curabitur gravida diam volutpat, fermentum nunc nec, accumsan odio.',
+        style: TextStyle(color: Colors.black54),
+      )
+    ],
+  );
+}
+
+Row _temperature() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.wb_sunny,
+            color: Colors.yellow,
+          ),
+        ],
+      ),
+      SizedBox(
+        width: 16,
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                '15 Clear',
+                style: TextStyle(color: Colors.deepPurple),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Moscow, Ukraine',
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
+          )
+        ],
+      )
+    ],
+  );
+}
+
+Wrap _temperatureForecast() {
+  return Wrap(
+    spacing: 10.0,
+    children: List.generate(8, (int index) {
+      return Chip(
+        label: Text(
+          '${index + 20}C',
+          style: const TextStyle(fontSize: 15.0),
+        ),
+        avatar: Icon(
+          Icons.wb_cloudy,
+          color: Colors.blue.shade300,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.0),
+          side: const BorderSide(color: Colors.grey),
+        ),
+        backgroundColor: Colors.grey.shade100,
+      );
+    }),
+  );
+}
+
+Row _footerRatings() {
+  var stars = Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.star, size: 15.0, color: Colors.yellow[600]),
+      Icon(Icons.star, size: 15.0, color: Colors.yellow[600]),
+      Icon(Icons.star, size: 15.0, color: Colors.yellow[600]),
+      const Icon(Icons.star, size: 15.0, color: Colors.black),
+      const Icon(Icons.star, size: 15.0, color: Colors.black),
+    ],
+  );
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      const Text(
+        'Info with openweathermap.org',
+        style: TextStyle(fontSize: 15.0),
+      ),
+      stars,
+    ],
+  );
 }
